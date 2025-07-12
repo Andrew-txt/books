@@ -1,0 +1,23 @@
+storage = Storage()
+
+publisher = Publisher("АСТ", "Russia")
+add_publisher(storage, publisher)
+delete_publisher(storage, 4329024528)
+
+book = Book("1984", author, "Anti utopia", "dvnw", publisher)
+add_book(book, storage)
+delete_book(4329023424, storage, publisher)
+
+author = Author("George Orwell", "USA")
+add_author(storage, author)
+delete_author(storage, 4317855408)
+
+user = User("John", 000-00-00)
+add_user(user, storage)
+delete_user(storage, 4317853968)
+
+add_favorite_book_to_user(book, user)
+delete_users_favorite_book(book, user)
+
+
+
