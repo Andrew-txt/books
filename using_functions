@@ -1,0 +1,27 @@
+PUBLISHER
++ create_publisher(database=db, publisher_name="ACT", country="Россия")
++ read_publisher(database=db, publisher_id=UUID('8a779f4a-1556-4885-9501-1073fe844c44'))
++ update_publisher(database=db, publisher_id=UUID('63e648d9-cc1a-4f2f-bf8d-b703d809b5d0'), fields_data={"publisher_name": "МИФ"})
++ delete_publisher(database=db, publisher_id=UUID("63e648d9-cc1a-4f2f-bf8d-b703d809b5d0"))
+
+AUTHOR
++ create_author(database=db, author_name="Oscar Wilde", country="Ireland")
++ read_author(database=db, author_id=UUID("369a8095-257f-4308-a858-3d9238ead1d0"))
++ update_author(database=db, author_id=UUID("369a8095-257f-4308-a858-3d9238ead1d0"), fields_data={"country": "England"})
++ delete_author(database=db, author_id=UUID("369a8095-257f-4308-a858-3d9238ead1d0"))
+
+BOOK
++ create_book(database=db, book_name="The Picture of Dorian Gray", genre="Gothic horror", publication_year=1891, author_id=UUID("369a8095-257f-4308-a858-3d9238ead1d0"), publisher_id=UUID("63e648d9-cc1a-4f2f-bf8d-b703d809b5d0"))
++ read_book(database=db, book_id=UUID("fbfbb713-2c9a-4f4b-9953-39236e0960f8"))
++ update_book(database=db, book_id=UUID('fbfbb713-2c9a-4f4b-9953-39236e0960f8'), fields_data={"genre": "Gothic horror novel"})
++ delete_book(database=db, book_id=UUID("fbfbb713-2c9a-4f4b-9953-39236e0960f8"))
+
+USER
++ create_user(database=db, user_name="John Doe", phone="94(8035)427-63-17")
++ read_user(database=db, user_id=UUID("15b90076-795a-4dd3-9150-65d016f077ad"))
++ update_user(database=db, user_id=UUID("15b90076-795a-4dd3-9150-65d016f077ad"), fields_data={"user_name": "John Doe"})
++ delete_user(database=db, user_id=UUID("15b90076-795a-4dd3-9150-65d016f077ad"))
+
+FAVORITE BOOK
++ add_favorite_book_to_user(database=db, user_id=UUID("15b90076-795a-4dd3-9150-65d016f077ad"), book_id=UUID("fbfbb713-2c9a-4f4b-9953-39236e0960f8"))
++ delete_users_favorite_book(database=db, user_id=UUID("15b90076-795a-4dd3-9150-65d016f077ad"), book_id=UUID("fbfbb713-2c9a-4f4b-9953-39236e0960f8"))
