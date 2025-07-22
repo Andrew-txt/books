@@ -11,7 +11,7 @@ db = SessionLocal()
 
 class Publisher(Base):
     __tablename__ = "publishers"
-    publisher_id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    publisher_id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, immutable=True)
     publisher_name = Column(String(100), nullable=False)
     country = Column(String(100), nullable=False)
     books = relationship("Book", back_populates="publisher")
@@ -21,7 +21,7 @@ class Publisher(Base):
 
 class Author(Base):
     __tablename__ = "authors"
-    author_id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    author_id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, immutable=True)
     author_name = Column(String(100), nullable=False)
     country = Column(String(100), nullable=False)
 
@@ -30,10 +30,10 @@ class Author(Base):
 
 class Book(Base):
     __tablename__ = "books"
-    book_id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    book_id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, immutable=True)
     book_name = Column(String(100), nullable=False)
     genre = Column(String(100), nullable=False)
-    publication_year = Column(Integer)
+    publication_year = Column(Integer, immutable=True)
     author_id = Column(UUID(as_uuid=True), ForeignKey("authors.author_id"))
     publisher_id = Column(UUID(as_uuid=True), ForeignKey("publishers.publisher_id"))
     author = relationship("Author")
@@ -44,9 +44,9 @@ class Book(Base):
 
 class User(Base):
     __tablename__ = "users"
-    user_id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    user_id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, immutable=True)
     user_name = Column(String(100), nullable=False, unique=True)
-    phone = Column(String(20), nullable=False, unique=True)
+    phone = Column(String(20), nullable=False, unique=True, immutable=True)
     favorite_books = relationship("UserFavoriteBook", back_populates="user")
 
     def __repr__(self):
@@ -54,8 +54,8 @@ class User(Base):
 
 class UserFavoriteBook(Base):
     __tablename__ = "user_favorite_books"
-    user_id = Column(UUID(as_uuid=True), ForeignKey('users.user_id'), primary_key=True)
-    book_id = Column(UUID(as_uuid=True), ForeignKey('books.book_id'), primary_key=True)
+    user_id = Column(UUID(as_uuid=True), ForeignKey('users.user_id'), primary_key=True, immutable=True)
+    book_id = Column(UUID(as_uuid=True), ForeignKey('books.book_id'), primary_key=True, immutable=True)
     user = relationship("User", back_populates="favorite_books")
     book = relationship("Book")
 
