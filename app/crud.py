@@ -1,14 +1,32 @@
 # здесь будут crud методы (c - str, r - obj, u - obj, d - str)
-from typing import Any, Optional
-from database import Publisher, Author, Book, User, UserFavoriteBook
-from sqlalchemy.orm import Session
 from uuid import UUID
-from app.notes import type_assert
-from app.find_by_id import find_author_by_id, find_publisher_by_id, find_book_by_id, find_user_by_id
+from typing import Any, Optional
+
+from sqlalchemy import inspect
+from sqlalchemy.orm import Session
+
+from database import Publisher, Author, Book, User, UserFavoriteBook
+
+from app.utils import (
+    find_author_by_id,
+    find_publisher_by_id,
+    find_book_by_id,
+    find_user_by_id,
+    type_assert
+)
+
 
 #Publisher--------------------------------------------------------
 @type_assert(Session, str, str)
 def create_publisher(database: Session, publisher_name: str, country: str):
+    publisher_exists = database.query(Publisher).filter(
+        Publisher.publisher_name.ilike(publisher_name),
+        Publisher.country.ilike(country)
+    ).first()
+
+    if publisher_exists:
+        raise ValueError("Издательство уже существует")
+
     publisher = Publisher(publisher_name=publisher_name,country=country)
 
     database.add(publisher)
@@ -26,10 +44,14 @@ def read_publisher(database: Session, publisher_id: UUID):
 @type_assert(Session, UUID, dict)
 def update_publisher(database: Session, publisher_id: UUID, fields_data: dict[str, Any]):
     publisher = find_publisher_by_id(database, publisher_id)
+    changeable_fields = {"publisher_name", "country"}
 
     for key, value in fields_data.items():
-        if hasattr(publisher, key):
-            setattr(publisher, key, value)
+        if key in changeable_fields:
+            if hasattr(publisher, key):
+                setattr(publisher, key, value)
+        else:
+            raise ValueError("Неизвестное поле")
 
     database.commit()
     database.refresh(publisher)
@@ -51,6 +73,14 @@ def delete_publisher(database: Session, publisher_id: UUID):
 #Author--------------------------------------------------------
 @type_assert(Session, str, str)
 def create_author(database: Session, author_name:str, country: str):
+    author_exists = database.query(Author).filter(
+        Author.author_name.ilike(author_name),
+        Author.country.ilike(country)
+    ).first()
+
+    if author_exists:
+        raise ValueError("Автор уже существует")
+
     author = Author(author_name=author_name, country=country)
 
     database.add(author)
@@ -67,10 +97,14 @@ def read_author(database:Session, author_id: UUID):
 @type_assert(Session, UUID, dict)
 def update_author(database: Session, author_id: UUID, fields_data: dict[str, Any]):
     author = find_author_by_id(database, author_id)
+    changeable_fields = {"author_name", "country"}
 
     for key, value in fields_data.items():
-        if hasattr(author, key):
-            setattr(author, key, value)
+        if key in changeable_fields:
+            if hasattr(author, key):
+                setattr(author, key, value)
+        else:
+            raise ValueError("Неизвестное поле")
 
     database.commit()
     database.refresh(author)
@@ -95,6 +129,17 @@ def create_book(
         publication_year: int,
         author_id: UUID,
         publisher_id: Optional[UUID] = None):
+    book_exists = database.query(Book).filter(
+        Book.book_name.ilike(book_name),
+        Book.author_id.ilike(author_id),
+        Book.publisher_id.ilike(publisher_id)
+    ).first()
+    if book_exists:
+        raise ValueError("Книга уже существует")
+
+    author = database.query(Author).filter_by(author_id=author_id).first()
+    if not author:
+        raise ValueError("Неизвестный автор")
 
     book = Book(
         book_name=book_name,
@@ -123,10 +168,14 @@ def read_book(database: Session, book_id: UUID):
 @type_assert(Session, UUID, dict)
 def update_book(database: Session, book_id: UUID, fields_data: dict[str, Any]):
     book = find_book_by_id(database, book_id)
+    changeable_fields = {"book_name", "genre"}
 
     for key, value in fields_data.items():
-        if hasattr(book, key):
-            setattr(book, key, value)
+        if key in changeable_fields:
+            if hasattr(book, key):
+                setattr(book, key, value)
+        else:
+            raise ValueError("Неизвестное поле")
 
     database.commit()
     database.refresh(book)
@@ -153,6 +202,14 @@ def delete_book(database: Session, book_id: UUID, publisher_id: Optional[UUID] =
 #User--------------------------------------------------------
 @type_assert(Session, str, str)
 def create_user(database: Session, user_name: str, phone: str):
+    user_exists = database.query(User).filter(
+        inspect(User.user_name == user_name),
+        inspect(User.phone == phone)
+    ).first()
+
+    if user_exists:
+        raise ValueError("Пользователь с такими же данными уже существует")
+
     user = User(user_name=user_name, phone=phone)
 
     database.add(user)
@@ -166,13 +223,10 @@ def read_user(database: Session, user_id: UUID):
     return user
 
 
-@type_assert(Session, UUID, dict)
-def update_user(database: Session, user_id: UUID, fields_data: dict[str, Any]):
+@type_assert(Session, UUID, str)
+def update_user(database: Session, user_id: UUID, new_user_name: str):
     user = find_user_by_id(database, user_id)
-
-    for key, value in fields_data.items():
-        if hasattr(user, key):
-            setattr(user, key, value)
+    user.user_name = new_user_name
 
     database.commit()
     database.refresh(user)
@@ -198,7 +252,7 @@ def add_favorite_book_to_user(database: Session, user_id: UUID, book_id: UUID):
     favorite_book = UserFavoriteBook(user_id=user_id, book_id=book_id)
     database.add(favorite_book)
     database.commit()
-    return "Книга добавлена в любимое"
+    return "Книга добавлена в список любимых книг пользователя"
 
 
 @type_assert(Session, UUID, UUID)
