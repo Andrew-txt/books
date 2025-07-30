@@ -10,7 +10,7 @@ def find_publisher_by_id(database: Session, publisher_id: UUID):
     publisher = database.get(Publisher, publisher_id)
 
     if not publisher:
-        raise ValueError("Издатель не найден")
+        raise ValueError("Publisher not found")
     return publisher
 
 
@@ -18,7 +18,7 @@ def find_author_by_id(database: Session, author_id: UUID):
     author = database.get(Author, author_id)
 
     if not author:
-        raise ValueError("Автор не найден")
+        raise ValueError("Author not found")
     return author
 
 
@@ -26,7 +26,7 @@ def find_book_by_id(database: Session, book_id: UUID):
     book = database.get(Book, book_id)
 
     if not book:
-        raise ValueError("Книга не найдена")
+        raise ValueError("Book not found")
     return book
 
 
@@ -34,7 +34,7 @@ def find_user_by_id(database: Session, user_id: UUID):
     user = database.get(User, user_id)
 
     if not user:
-        raise ValueError("Пользователь не найден")
+        raise ValueError("User not found")
     return user
 
 
@@ -67,3 +67,5 @@ def type_assert(*ty_args, **ty_kwargs):
             return func(*bound_values.args, **bound_values.kwargs)
         return wrapper
     return decorate
+
+
