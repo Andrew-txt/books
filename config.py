@@ -1,1 +1,0 @@
-DB_CONFIG = "postgresql://diana1215:314159265@localhost:5432/Books"
