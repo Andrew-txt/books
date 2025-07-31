@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from uuid import UUID
 from typing import Any, Optional
 
@@ -9,8 +9,8 @@ class ORMBaseModel(BaseModel):
 
 
 class PublisherCreate(BaseModel):
-    publisher_name: str
-    country: str
+    publisher_name: str = Field(..., min_length=3, max_length=35)
+    country: str = Field(..., min_length=3, max_length=63)
 
 
 class PublisherResponse(ORMBaseModel):
@@ -25,8 +25,8 @@ class PublisherUpdate(BaseModel):
 
 
 class AuthorCreate(BaseModel):
-    author_name: str
-    country: str
+    author_name: str = Field(..., min_length=3, max_length=35)
+    country: str = Field(..., min_length=3, max_length=63)
 
 
 class AuthorResponse(ORMBaseModel):
@@ -41,9 +41,9 @@ class AuthorUpdate(BaseModel):
 
 
 class BookCreate(BaseModel):
-    book_name: str
-    genre: str
-    publication_year: int
+    book_name: str = Field(..., min_length=1, max_length=63)
+    genre: str = Field(..., min_length=4, max_length=63)
+    publication_year: int = Field(..., gt=0, le=2025)
     author_id: UUID
     publisher_id: UUID
 
@@ -63,8 +63,8 @@ class BookUpdate(BaseModel):
 
 
 class UserCreate(BaseModel):
-    user_name: str
-    phone: str
+    user_name: str = Field(..., min_length=3, max_length=35)
+    phone: str = Field(..., pattern=r"^\+?\d{10,20}$")
 
 
 class UserResponse(ORMBaseModel):
@@ -75,4 +75,5 @@ class UserResponse(ORMBaseModel):
 
 class UserUpdate(BaseModel):
     user_id: UUID
+
     user_name: str
