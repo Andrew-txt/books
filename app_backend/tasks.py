@@ -1,10 +1,10 @@
 from sqlalchemy import inspect, and_
 from sqlalchemy.orm import Session
 
-from app.database import Publisher, Author, Book, User, UserFavoriteBook
-from app.models import *
+from .database import Publisher, Author, Book, User, UserFavoriteBook
+from .models import *
 
-from app.utils import (
+from .utils import (
     find_author_by_id,
     find_publisher_by_id,
     find_book_by_id,

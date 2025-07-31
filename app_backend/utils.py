@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from app.database import Publisher, Author, Book, User
+from .database import Publisher, Author, Book, User
 from typing import get_origin, get_args, Union
 from uuid import UUID
 import inspect
